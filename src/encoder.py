@@ -1,3 +1,5 @@
+from transformers import ModernBertModel, ModernBertConfig
+
 class Encoder:
     def __init__(self):
         pass
