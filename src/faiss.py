@@ -9,14 +9,14 @@ class FaissDB:
     def build_index(
         self,
         vectors,
+        ids,
     ):
         vectors = vectors.astype('float32')
         vector_dimension = vectors.shape[1]
         faiss.normalize_L2(vectors)
         cpu_index = faiss.IndexFlatIP(vector_dimension)
         self.index = faiss.IndexIDMap(cpu_index)
-        ids = np.arange(0, len(vectors)).astype('int64')
-        self.index.add_with_ids(vectors, ids)
+        self.index.add_with_ids(vectors, np.array(ids, dtype=np.int64))
         
     
     def perform_search(self, query):
