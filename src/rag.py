@@ -41,7 +41,7 @@ class Rag:
         number_of_batches = int(num_datapoints/batch_size + 1 if num_datapoints%batch_size>0 else 0)
         for item in datapoints:
             all_text.append(item["context"])
-        with tqdm(total=number_of_batches, desc=f"encoding...", unit="paragraph") as progress_bar:
+        with tqdm(total=len(datapoints), desc=f"encoding...", unit="paragraph") as progress_bar:
             for start_idx in range(0, num_datapoints, batch_size):
                 end_idx = min(start_idx + batch_size, num_datapoints)
                 batch_paragraphs = all_text[start_idx:end_idx]
@@ -85,7 +85,6 @@ class Rag:
         return final_match_text
     
     def api_caller(self,):
-        
         pass
     
     
