@@ -11,12 +11,14 @@ from tqdm import tqdm # type: ignore
 
 from src.encoder import Encoder
 from src.faiss import FaissDB
+from src.inference.open_ai_inference import OpenAIInference
 class Rag:
     def __init__(
         self,
         input_file: Optional[Text] = None,
         device: Text = "cpu",
         load_encodings: bool = False,
+        min_texts: int = 3
     ):
         self.load_encodings = load_encodings
         self.input_file = input_file
@@ -24,6 +26,8 @@ class Rag:
         self.encoder = Encoder(device=device)
         self.faiss = FaissDB()
         self.ids = None
+        self.min_texts = min_texts
+        self.open_ai_inference = OpenAIInference()
         self.load_input()
 
     def load_input(self,):
@@ -38,7 +42,6 @@ class Rag:
         num_datapoints = len(datapoints)
         all_encoded = []
         all_text = []
-        number_of_batches = int(num_datapoints/batch_size + 1 if num_datapoints%batch_size>0 else 0)
         for item in datapoints:
             all_text.append(item["context"])
         with tqdm(total=len(datapoints), desc=f"encoding...", unit="paragraph") as progress_bar:
@@ -67,22 +70,26 @@ class Rag:
     def retreiver(
         self,
         query_encoding,
-        context_encodings,
     ) -> Text:
+        
         match_list = self.faiss.perform_search(query_encoding)
         match_list = [item for item in match_list if item!=-1]
+        match_list = match_list[:min(self.min_texts, len(match_list))]
+        
         print(match_list)
-        final_match = match_list[0]
-        max_cosine_sim = -math.inf
-        query_tensor = torch.tensor(query_encoding)
+        # final_match = match_list[0]
+        # max_cosine_sim = -math.inf
+        # query_tensor = torch.tensor(query_encoding)
+        # for item in match_list:
+        #     cosine = F.cosine_similarity(query_tensor, torch.tensor(context_encodings[item]))
+        #     if cosine > max_cosine_sim:
+        #         max_cosine_sim = cosine
+        #         final_match = item
+        # print(final_match)
+        final_text = ""
         for item in match_list:
-            cosine = F.cosine_similarity(query_tensor, torch.tensor(context_encodings[item]))
-            if cosine > max_cosine_sim:
-                max_cosine_sim = cosine
-                final_match = item
-        print(final_match)
-        final_match_text = self.dataset[final_match]
-        return final_match_text
+            final_text = f"{final_text}{self.dataset[item]}\n"
+        return final_text
     
     def api_caller(self,):
         pass
