@@ -34,3 +34,4 @@ This repository implements a **Retrieval-Augmented Generation (RAG)** chatbot us
    ```bash
    git clone https://github.com/yourusername/rag-chatbot.git
    cd rag-chatbot
+   export PYTHONPATH=$(pwd)
