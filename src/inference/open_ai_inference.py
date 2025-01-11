@@ -27,13 +27,7 @@ class OpenAIInference:
         try:
             response = self.client.chat.completions.create(
                 model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": "You are a helpful assistant."},
-                    {
-                        "role": "user",
-                        "content": "Write a haiku about recursion in programming."
-                    }
-                ]
+                messages=message
             )
             return response.choices[0].message.content
         except (RateLimitError, APIError) as e:
@@ -45,4 +39,11 @@ class OpenAIInference:
 
 if __name__=="__main__":
     inference = OpenAIInference()
-    print(inference.generate_response())
+    message = [
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {
+                        "role": "user",
+                        "content": "Write a haiku about the truth of life in programming."
+                    }
+                ]
+    print(inference.generate_response(message))
