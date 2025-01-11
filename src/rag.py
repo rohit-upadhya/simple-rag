@@ -71,7 +71,7 @@ class Rag:
     ) -> List[Dict[Text, Text]]:
         return Prompter(
             context_text=context_text,
-            inference_text=query_text,
+            query_text=query_text,
             prompt_template=prompt_template,
         ).build_chat_prompt()
     
@@ -123,9 +123,9 @@ class Rag:
         self.build_index(encoded_data, self.ids)
         query_encoding = self.encode_query(query=query)
         
-        final_match_text = self.retreiver(query_encoding, encoded_data)
+        final_match_text = self.retreiver(query_encoding)
         
-        input_chat_message = self.prompt_builder(context_text=final_match_text, query_text=query)
+        input_chat_message = self.prompt_builder(context_text=final_match_text, query_text=query, prompt_template=self.prompt_template)
         
         response = self.api_caller(input_chat_message)
         return response
