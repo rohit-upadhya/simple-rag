@@ -1,0 +1,9 @@
+torch
+numpy
+datasets
+tqdm
+faiss-cpu
+transformers
+openai
+python-dotenv
+PyYAML
