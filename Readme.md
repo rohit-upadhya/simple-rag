@@ -32,6 +32,6 @@ This repository implements a **Retrieval-Augmented Generation (RAG)** chatbot us
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/rag-chatbot.git
-   cd rag-chatbot
+   git clone https://github.com/rohit-upadhya/simple-rag.git
+   cd simple-rag
    export PYTHONPATH=$(pwd)
