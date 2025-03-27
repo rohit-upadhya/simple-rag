@@ -10,7 +10,6 @@ from tqdm import tqdm  # type: ignore
 
 from src.encoder import Encoder
 from src.faiss import FaissDB
-from src.inference.open_ai_inference import OpenAIInference
 from src.inference.inference import Inference
 from src.utils.input_loader import InputLoader
 from src.utils.prompter import Prompter
@@ -112,7 +111,7 @@ class Rag:
         return final_text
 
     def api_caller(self, message: list[dict]) -> str:
-        response = self.inference.generate_results(input_text=message)
+        response = self.inference.generate_results(input_dict=message)
         return response
 
     def chat_bot(self, query: str) -> str:

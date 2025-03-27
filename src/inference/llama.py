@@ -69,11 +69,14 @@ class LlamaInference:
 
     def local_model_api(
         self,
-        input_text: str,
+        input_dict: str,
     ):
         model = self._load_model(model_name_or_path=self.model_name_or_path)
         tokenizer = self._load_tokenizer(model_name_or_path=self.model_name_or_path)
-
+        input_text = tokenizer.apply_chat_template(
+            input_dict, tokenize=False, add_generation_prompt=False
+        )
+        print(input_text)
         inputs = tokenizer(input_text, return_tensors="pt").to(self.device)
         outputs = model.generate(**inputs, max_new_tokens=20)
         return outputs

@@ -14,18 +14,18 @@ class Inference:
 
     def generate_results(
         self,
-        input_text: str,
+        input_dict: list[dict],
     ):
         if self.use_local:
             generation_method = self._generate_local
         else:
             generation_method = self._generate_api
 
-        return generation_method(input_text)
+        return generation_method(input_dict)
 
     def _generate_local(
         self,
-        input_text: str,
+        input_dict: list[dict],
     ):
         local_inference = LlamaInference(
             model_name_or_path="meta-llama/Llama-3.2-1B",
@@ -33,16 +33,13 @@ class Inference:
             quantization_bits=4,
             device=self.device,
         )
-        desired_output = local_inference.local_model_api(
-            input_text=input_text,
-        )
+        desired_output = local_inference.local_model_api(input_dict=input_dict)
         return desired_output
-        pass
 
     def _generate_api(
         self,
-        input_text: str,
+        input_dict: list[dict],
     ):
         self.open_ai_inference = OpenAIInference()
-        response = self.open_ai_inference.generate_response(message=input_text)
+        response = self.open_ai_inference.generate_response(message=input_dict)
         return response
