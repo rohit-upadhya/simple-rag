@@ -49,7 +49,6 @@ class Rag:
         self.prompt_template = self.input_loader.load_file(
             file_name=self.prompt_template_file
         )
-        print(self.dataset[0])
 
     def encode_dataset(self, datapoints, batch_size=16):
         num_datapoints = len(datapoints)
