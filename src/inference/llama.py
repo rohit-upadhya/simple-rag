@@ -1,7 +1,12 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from huggingface_hub import login
+from dotenv import load_dotenv
+
 import torch
 import os
+
+env_file = ".env.dev"
+load_dotenv(env_file)
 
 login(os.getenv("HUGGING_FACE_KEY"))
 
@@ -65,12 +70,15 @@ class LlamaInference:
         input_text = tokenizer.apply_chat_template(
             input_dict, tokenize=False, add_generation_prompt=False
         )
-        print(input_text)
         inputs = tokenizer(input_text, return_tensors="pt").to(self.device)
         outputs = model.generate(**inputs, max_new_tokens=20)
-        return outputs
+        decoded_output = tokenizer.decode(outputs[0], skip_special_tokens=True)
+        return decoded_output
 
 
 if __name__ == "__main__":
-
+    llama = LlamaInference(
+        device=torch.device("cuda"),
+    )
+    print(llama.local_model_api("Was ist der name?"))
     pass

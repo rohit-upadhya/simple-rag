@@ -30,8 +30,6 @@ class Encoder:
         with torch.no_grad():
             outputs = self.model(**inputs)
         embeddings = outputs.last_hidden_state.mean(dim=1)
-        if self.model:
-            del self.model
         return embeddings
     
     def load_tokenizer(self,):
