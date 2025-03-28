@@ -102,9 +102,17 @@ class Rag:
     def retreiver(
         self,
         query_encoding,
+        k: int = 3,
+        threshold: float = 0.6,
     ) -> str:
 
-        match_list = self.faiss.perform_search(query_encoding)
+        scores, match_list = self.faiss.perform_search_with_scores(query_encoding, k=k)
+
+        top_score = max(scores)
+
+        if top_score < threshold:
+            return "No relevant documents found"
+
         match_list = [item for item in match_list if item != -1]
         match_list = match_list[: min(self.min_texts, len(match_list))]
 
