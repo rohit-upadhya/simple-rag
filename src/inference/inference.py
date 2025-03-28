@@ -30,7 +30,6 @@ class Inference:
         local_inference = LlamaInference(
             model_name_or_path="meta-llama/Llama-3.2-1B",
             load_quantized=True,
-            quantization_bits=4,
             device=self.device,
         )
         desired_output = local_inference.local_model_api(input_dict=input_dict)

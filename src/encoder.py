@@ -17,7 +17,7 @@ class Encoder:
         self,
         input_text: Text
     ):
-        if isinstance(input_text, str):  # Wrap single string in a list
+        if isinstance(input_text, str):
             input_text = [input_text]
         inputs = self.tokenizer.batch_encode_plus(
             input_text,
@@ -30,6 +30,8 @@ class Encoder:
         with torch.no_grad():
             outputs = self.model(**inputs)
         embeddings = outputs.last_hidden_state.mean(dim=1)
+        if self.model:
+            del self.model
         return embeddings
     
     def load_tokenizer(self,):

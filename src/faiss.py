@@ -23,6 +23,6 @@ class FaissDB:
         
         query = query.astype('float32')
         faiss.normalize_L2(query)
-        distances, ann = self.index.search(query, k=10)
+        _, ann = self.index.search(query, k=10)
         return ann[0]
     

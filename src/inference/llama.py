@@ -1,33 +1,28 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
+from huggingface_hub import login
 import torch
+import os
+
+login(os.getenv("HUGGING_FACE_KEY"))
 
 
 class LlamaInference:
     def __init__(
         self,
         device: torch.device = torch.device("cpu"),
-        model_name_or_path: str = "meta-llama/Llama-3.2-1B",
+        model_name_or_path: str = "meta-llama/Llama-3.2-1B-Instruct",
         load_quantized: bool = True,
-        quantization_bits: int = 4,
     ):
         self.model_name_or_path = model_name_or_path
-        self.quantization_bits = quantization_bits
         self.load_quantized = load_quantized
         self.device = device
 
     def _quantization_config(
         self,
     ):
-        load_in_4bit = False
-        load_in_8bit = False
-        if self.quantization_bits == 4:
-            load_in_4bit = True
-        else:
-            load_in_8bit = True
         bnb_config = BitsAndBytesConfig(
-            load_in_4bit=load_in_4bit,
-            load_in_8bit=load_in_8bit,
-            bnb_4bit_use_double_quant=load_in_4bit,
+            load_in_4bit=True,
+            bnb_4bit_use_double_quant=True,
             bnb_4bit_quant_type="nf4",
         )
 
@@ -35,19 +30,16 @@ class LlamaInference:
 
     def _load_model(
         self,
-        model_name_or_path: str = None,
     ):
         model_config = {
+            "pretrained_model_name_or_path": self.model_name_or_path,
             "device_map": "auto",
             "torch_dtype": torch.float16,
         }
         try:
-            if model_name_or_path is None:
-                model_name_or_path = self.model_name_or_path
             if self.load_quantized:
                 quantization_config = self._quantization_config()
                 model_config["quantization_config"] = quantization_config
-            model_config["pretrained_model_name_or_path"] = model_name_or_path
             model = AutoModelForCausalLM.from_pretrained(**model_config)
         except:
             raise ValueError(
@@ -57,12 +49,9 @@ class LlamaInference:
 
     def _load_tokenizer(
         self,
-        model_name_or_path: str = None,
     ):
         try:
-            if model_name_or_path is not None:
-                model_name_or_path = self.model_name_or_path
-            tokenizer = AutoTokenizer.from_pretrained()
+            tokenizer = AutoTokenizer.from_pretrained(self.model_name_or_path)
         except:
             raise ValueError("Issue loading model. Use OpenAI API instead.")
         return tokenizer
@@ -71,8 +60,8 @@ class LlamaInference:
         self,
         input_dict: str,
     ):
-        model = self._load_model(model_name_or_path=self.model_name_or_path)
-        tokenizer = self._load_tokenizer(model_name_or_path=self.model_name_or_path)
+        tokenizer = self._load_tokenizer()
+        model = self._load_model()
         input_text = tokenizer.apply_chat_template(
             input_dict, tokenize=False, add_generation_prompt=False
         )

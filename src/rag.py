@@ -7,12 +7,16 @@ import pickle
 from typing import Optional, List, Dict, Any
 from datasets import load_dataset  # type: ignore
 from tqdm import tqdm  # type: ignore
+from dotenv import load_dotenv  # type: ignore
 
 from src.encoder import Encoder
 from src.faiss import FaissDB
 from src.inference.inference import Inference
 from src.utils.input_loader import InputLoader
 from src.utils.prompter import Prompter
+
+env_file = ".env.dev"
+load_dotenv(env_file)
 
 
 class Rag:
@@ -126,6 +130,9 @@ class Rag:
         self.build_index(encoded_data, self.ids)
         query_encoding = self.encode_query(query=query)
 
+        if self.encoder.model:
+            del self.encoder.model
+
         final_match_text = self.retreiver(query_encoding)
 
         input_chat_message = self.prompt_builder(
@@ -135,7 +142,6 @@ class Rag:
         )
 
         response = self.api_caller(input_chat_message)
-        # response = "Hello People"
         return response
 
 
