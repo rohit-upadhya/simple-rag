@@ -28,7 +28,7 @@ class Inference:
         input_dict: list[dict],
     ):
         local_inference = LlamaInference(
-            model_name_or_path="meta-llama/Llama-3.2-1B",
+            model_name_or_path="meta-llama/Llama-3.2-1B-Instruct",
             load_quantized=True,
             device=self.device,
         )
