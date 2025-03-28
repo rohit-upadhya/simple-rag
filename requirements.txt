@@ -7,3 +7,5 @@ transformers
 openai
 python-dotenv
 PyYAML
+bitsandbytes
+accelerate

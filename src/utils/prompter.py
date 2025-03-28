@@ -49,4 +49,4 @@ if __name__ == "__main__":
         prompt_template=prompt_template,
     )
 
-    print(prompter.build_chat_prompt())
+    # print(prompter.build_chat_prompt())
